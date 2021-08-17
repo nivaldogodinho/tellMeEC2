@@ -7,34 +7,28 @@ CLIENT = boto3.client('ec2')
 
 for instance in EC2.instances.all():
 
-    print("\t################## INSTANCE INFO #####################")
-    print("\tInstance ID: {0}\tAMI ID: {1}\tState: {2}".format(
-        instance.id,instance.image_id,
-        instance.state['Name'],
-    ))
-
-    print("\tPriv. IP: {0}\tPub. IP: {1}".format(
-        instance.private_ip_address,
-        instance.public_ip_address
-    ))
-
-    print("\tPriv. DNS: {0}\tPub. DNS: {1}".format(
-        instance.private_dns_name,
-        instance.public_dns_name,
-    ))
+    print("\n\t################## INSTANCE INFO #####################")
+    print(f"\tInstance ID: {instance.id}"
+          f"\tAMI ID: {instance.image_id}"
+          f"\tState: {instance.state['Name']}"
+          f"\n\tPriv. IP: {instance.private_ip_address}"
+          f"\tPub. IP: {instance.public_ip_address}"
+          f"\n\tPriv. DNS: {instance.private_dns_name}"
+          f"\tPub. DNS: {instance.public_dns_name}"
+        
+    )
 
     print("\n\t##################### VPC INFO ###################")
-    print("\tVPC ID: {0}\tSubnet ID: {1}".format(
-        instance.vpc_id,instance.subnet_id
-    ))
+    print(f"\tVPC ID: {instance.vpc_id}"
+          f"\tSubnet ID: {instance.subnet_id}"
+    )
 
     for i in range(len(instance.security_groups)):
-        print("\tSG Name: {0}\tSG ID: {1}".format(
-            instance.security_groups[i]['GroupName'],
-            instance.security_groups[i]['GroupId']
-        ))
+        print(f"\tSG Name: {instance.security_groups[i]['GroupName']}"
+              f"\tSG ID: {instance.security_groups[i]['GroupId']}"
+        )
 
-        print("\tNACL Name: {0}\tNACL ID: {1}".format(
-            instance.security_groups[i]['GroupName'],
-            instance.security_groups[i]['GroupId']
-        ))
+        #Necessário pegar o método correto para pegar o NACL
+        print(f"\tNACL Name: {instance.security_groups[i]['GroupName']}"
+              f"\tNACL ID: {instance.security_groups[i]['GroupId']}"
+        )
