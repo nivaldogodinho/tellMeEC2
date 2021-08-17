@@ -1,7 +1,7 @@
 import boto3
 
 def lambda_handler(event, context):
-        
+    #Troque a região de acordo com a sua
     REGION_NAME='sa-east-1'
     EC2 = boto3.resource('ec2',REGION_NAME)
     CLIENT = boto3.client('ec2')
