@@ -2,76 +2,25 @@ import boto3
 import csv
 
 ec2 = boto3.resource('ec2')
-client = boto3.client('ec2')
-Myec2 = client.describe_instances()
-SGID = []
 
-with open('ec2agoravai.csv', 'w', encoding='UTF8', newline='') as f:
+# creates the csv file
+with open('ec2description.csv', 'w', encoding='UTF8', newline='') as f:
     writer = csv.writer(f)
 
-    header = ['InstanceID', 'InstanceType', 'State', 'SG_ID', 'SG_Name', 'SG_Inbound/Outbound','ROW SGDescription', 'ROW SGName', 'ROW SGID', 'ROW IPpermissions', 'Nacl_ID', 'RT_ID', 'Teste']
-    
+    # creates the header
+    header = ['InstanceID', 'State', 'InstanceType', 'SG_ID', 'SG_Name', 'SG_Inbound/Outbound', ]
+   
     # write the header
     writer.writerow(header)
 
-    for ec2info in Myec2['Reservations']:
-        for ec2info1 in ec2info['Instances']:
-            for securitygroup in ec2info1['SecurityGroups']:
-                print(ec2info1['State']['Name'])
+    # collect the data for writing to csv file
+    for instance in ec2.instances.all():
+        print('=======PROCESSANDO=========')
+        
+        #creates the header
+        data = [instance.id, instance.state['Name'], instance.instance_type, instance.security_groups[0]['GroupId'], instance.security_groups[0]['GroupName']]
 
-        for instance in ec2.instances.all():
-            print("\nInstância EC2 \n\nId: {0}\nPlatform: {1}\nType: {2}\nPublic IPv4: {3}\nAMI: {4}\nState: {5}\nVPC Id: {6}\nSubnet: {7}\nSecurity Group: {8}\nPublic DNS: {9}\nTags: {10}\nNetwork Interfaces: {11}"
-                .format(instance.id, instance.platform, instance.instance_type, instance.public_ip_address,
-                        instance.image.id, instance.state, instance.vpc_id, instance.subnet_id, instance.security_groups,
-                        instance.public_dns_name, instance.tags, instance.network_interfaces))
+        # write the data to csv file
+        writer.writerow(data)
 
-    #print("\nNaCL\n")
 
-            for nacl in ec2.network_acls.all():
-                print("Nacl Id: {0}\nTags: {1}\nEntries: {2}"
-                    .format(nacl.id, nacl.tags, nacl.entries))
-
-    #print("\nSecurity Group\n")
-
-                for sg in ec2.security_groups.all():
-                    print("Security Group Id: {0}\nTags: {1}\nEntries: {2}"
-                        .format(sg.id, sg.tags, sg.ip_permissions))
-
-    #print("\nRoute Table\n")
-
-                    for rt in ec2.route_tables.all():
-                        print("Route Table Id: {0}\nTags: {1}"
-                            .format(rt.id, rt.tags))
-
-                        #for col in sg.id:
-                        #    SGID.append(col['GroupID'])
-                        #print(SGID)
-
-                        #a_list = [1, 2, 3]
-                        #converted_list = [str(element) for element in SGID]
-                        #joined_string = ",".join(converted_list)
-                        #print(joined_string)
-
-                        #def converttostr(input_seq, seperator):
-                        # Join all the strings in list
-                        #    final_str = seperator.join(input_seq)
-                        #    return final_str
-
-                        # List of names separated with a comma
-                        #seperator = ', '
-
-                        #stringSG = converttostr(SGID, seperator)
-
-                        response = client.describe_security_groups(
-                            GroupIds=[
-                                sg.id,
-                            ],
-                        )
-                        print(response)
-
-                        for row in response['SecurityGroups']:
-                            print(row['Description'])
-
-                        data = [instance.id, instance.instance_type, ec2info1['State']['Name'], securitygroup['GroupId'], securitygroup['GroupName'], sg.ip_permissions, row['Description'], row['GroupName'], row['GroupId'], row['IpPermissions'], response, nacl.id, rt.id]
-
-                        writer.writerow(data)
