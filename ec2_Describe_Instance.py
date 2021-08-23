@@ -5,7 +5,7 @@ client = boto3.client('ec2',region_name='us-east-1')
 
 response = client.describe_instances()
 
-#Informações sobre a ec2
+#Informações sobre a Instancia ec2
 for info in response['Reservations']:
     for instance in info['Instances']:
         instance_id = instance ['InstanceId']
